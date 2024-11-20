@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import Dropzone from 'react-dropzone';
 import { useDicomViewer } from '../../contexts/DicomViewerContext';
-import DicomViewer from '../DicomViewer';
+import DicomViewer from '../DicomViewer/DicomViewer';
 
 function Local() {
   const [isLoading, setIsLoading] = useState(false);
