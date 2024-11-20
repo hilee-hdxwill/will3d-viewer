@@ -1,6 +1,6 @@
 // components/DicomViewer/index.tsx
 import React from 'react';
-import { useDicomViewer } from '../../contexts/DicomViewerContext';
+import { useDicomViewer } from './DicomViewerContext';
 
 function DicomViewer() {
   const { state } = useDicomViewer();

@@ -1,7 +1,7 @@
 // Local.tsx
 import React, { useState } from 'react';
 import Dropzone from 'react-dropzone';
-import { useDicomViewer } from '../../contexts/DicomViewerContext';
+import { useDicomViewer } from '../DicomViewer/DicomViewerContext';
 import DicomViewer from '../DicomViewer/DicomViewer';
 
 function Local() {

@@ -1,6 +1,6 @@
 // App.tsx
 import Local from './components/Local'
-import { DicomViewerProvider } from './contexts/DicomViewerContext'
+import { DicomViewerProvider } from './components/DicomViewer/DicomViewerContext'
 
 function App() {
   return (
