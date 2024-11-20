@@ -1,10 +1,12 @@
 // components/DicomViewer/index.tsx
 import React, { useState } from 'react';
 import { useDicomViewer } from './DicomViewerContext';
+import MPRViewer from './MPRViewer';
 
 function DicomViewer() {
   const { state } = useDicomViewer();
   const [showDetails, setShowDetails] = useState(false);
+  const [viewMode, setViewMode] = useState<'metadata' | 'mpr'>('metadata');
   
   const firstStudy = state.studies[0];
   const totalImages = state.studies.reduce((total, study) => 
@@ -15,22 +17,18 @@ function DicomViewer() {
     
     const value = metadata[key];
     
-    // DICOM Patient Name은 특별한 처리 필요
     if (key === 'PatientName' && value.Alphabetic) {
       return value.Alphabetic;
     }
     
-    // Value 배열이 있는 경우
     if (value.Value && Array.isArray(value.Value)) {
       return value.Value.join(', ');
     }
     
-    // 단순 값인 경우
     if (typeof value === 'string' || typeof value === 'number') {
       return value;
     }
     
-    // 객체인 경우 JSON 문자열로 변환
     if (typeof value === 'object') {
       try {
         return JSON.stringify(value);
@@ -42,7 +40,6 @@ function DicomViewer() {
     return 'N/A';
   };
 
-  // 날짜 포맷팅 함수
   const formatDate = (dateString: string) => {
     if (!dateString) return 'N/A';
     try {
@@ -55,7 +52,6 @@ function DicomViewer() {
     }
   };
 
-  // 시간 포맷팅 함수
   const formatTime = (timeString: string) => {
     if (!timeString) return 'N/A';
     try {
@@ -68,10 +64,18 @@ function DicomViewer() {
     }
   };
 
-  return (
+  const MetadataView = () => (
     <div className="w-full h-full bg-black flex items-center justify-center overflow-auto py-8">
       <div className="text-center max-w-4xl w-full mx-4">
-        <h1 className="text-white text-3xl mb-6">DICOM Files Loaded Successfully</h1>
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-white text-3xl">DICOM Files Loaded Successfully</h1>
+          <button
+            onClick={() => setViewMode('mpr')}
+            className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-full"
+          >
+            Launch MPR View
+          </button>
+        </div>
         
         <div className="bg-gray-800 p-6 rounded-lg text-left space-y-3">
           <p className="text-blue-300">
@@ -103,7 +107,6 @@ function DicomViewer() {
 
                 {showDetails && (
                   <div className="mt-4 space-y-3 border-t border-gray-700 pt-4">
-                    {/* 환자 정보 섹션 */}
                     <div className="mb-6">
                       <h3 className="text-green-400 font-semibold mb-3">Patient Information:</h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -140,7 +143,6 @@ function DicomViewer() {
                       </div>
                     </div>
 
-                    {/* 스터디 정보 섹션 */}
                     <div className="mb-6">
                       <h3 className="text-green-400 font-semibold mb-3">Study Information:</h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -167,7 +169,6 @@ function DicomViewer() {
                       </div>
                     </div>
 
-                    {/* 이미지 기술 정보 섹션 */}
                     <div className="mb-6">
                       <h3 className="text-green-400 font-semibold mb-3">Image Technical Information:</h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -231,6 +232,20 @@ function DicomViewer() {
       </div>
     </div>
   );
+
+  const MPRView = () => (
+    <div className="relative w-full h-full">
+      <button
+        onClick={() => setViewMode('metadata')}
+        className="absolute top-4 right-4 z-10 bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-full"
+      >
+        Back to Metadata
+      </button>
+      <MPRViewer />
+    </div>
+  );
+
+  return viewMode === 'metadata' ? <MetadataView /> : <MPRView />;
 }
 
 export default DicomViewer;

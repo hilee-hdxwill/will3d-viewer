@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@cornerstonejs/tools": "^2.2.10",
     "@ohif/core": "^3.9.1",
     "@ohif/ui": "^3.9.1",
     "classnames": "^2.5.1",
