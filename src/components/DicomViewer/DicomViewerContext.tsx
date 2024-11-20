@@ -101,11 +101,9 @@ export function DicomViewerProvider({ children }: { children: React.ReactNode })
     try {
       const processPromises = files.map(processFile);
       await Promise.all(processPromises);
-    } catch (error) {
-      setState(prev => ({
-        ...prev,
-        error: 'Failed to load DICOM files. Please try again.'
-      }));
+    } catch (error: unknown) {
+      console.error(error);
+
     } finally {
       setState(prev => ({ ...prev, isLoading: false }));
     }
