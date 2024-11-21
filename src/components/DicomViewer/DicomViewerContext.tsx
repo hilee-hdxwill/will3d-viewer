@@ -1,5 +1,6 @@
 // contexts/DicomViewerContext.tsx
 import React, { createContext, useContext, useState } from 'react';
+// @ts-expect-error no type definitions
 import dcmjs from 'dcmjs';
 import dicomImageLoader from '@cornerstonejs/dicom-image-loader';
 

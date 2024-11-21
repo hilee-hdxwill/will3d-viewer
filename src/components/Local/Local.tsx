@@ -95,6 +95,7 @@ function Local() {
                       }
                     }}
                     accept=".dcm,application/dicom"
+                    // @ts-expect-error directory input attributes
                     webkitdirectory=""
                     directory=""
                     multiple
