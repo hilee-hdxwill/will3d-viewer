@@ -1,15 +1,15 @@
-// App.tsx
-import Local from './components/Local'
-import { DicomViewerProvider } from './components/DicomViewer/DicomViewerContext'
+// src/App.tsx
+import { DicomViewerProvider } from './context/DicomContext';
+import { MainViewer } from './components/MainViewer';
 
 function App() {
   return (
     <DicomViewerProvider>
       <div className="w-screen h-screen bg-black">
-        <Local />
+        <MainViewer />
       </div>
     </DicomViewerProvider>
-  )
+  );
 }
 
-export default App
+export default App;

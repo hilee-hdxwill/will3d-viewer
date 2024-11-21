@@ -1,76 +1,27 @@
-// components/DicomViewer/DicomViewer.tsx
-import React, { useState } from 'react';
-import { useDicomViewer } from './DicomViewerContext';
-import MPRViewer from './MPRViewer';
+// src/components/DicomMetadataViewer/index.tsx
+import { useState } from 'react';
+import { useDicomViewer } from '../../context/DicomContext';
+import { getMetadataValue, formatDate, formatTime } from '../../utils/dicomUtils';
 
-function DicomViewer() {
+interface DicomMetadataViewerProps {
+  onMPRClick: () => void;
+}
+
+export function DicomMetadataViewer({ onMPRClick }: DicomMetadataViewerProps) {
   const { state } = useDicomViewer();
   const [showDetails, setShowDetails] = useState(false);
-  const [viewMode, setViewMode] = useState<'metadata' | 'mpr'>('metadata');
-  
+
   const firstStudy = state.studies[0];
   const totalImages = state.studies.reduce((total, study) => 
     total + (study.imageIds?.length || 0), 0);
 
-  const getMetadataValue = (metadata: any, key: string) => {
-    if (!metadata || !metadata[key]) return 'N/A';
-    
-    const value = metadata[key];
-    
-    if (key === 'PatientName' && value.Alphabetic) {
-      return value.Alphabetic;
-    }
-    
-    if (value.Value && Array.isArray(value.Value)) {
-      return value.Value.join(', ');
-    }
-    
-    if (typeof value === 'string' || typeof value === 'number') {
-      return value;
-    }
-    
-    if (typeof value === 'object') {
-      try {
-        return JSON.stringify(value);
-      } catch {
-        return 'Complex Object';
-      }
-    }
-    
-    return 'N/A';
-  };
-
-  const formatDate = (dateString: string) => {
-    if (!dateString) return 'N/A';
-    try {
-      const year = dateString.substring(0, 4);
-      const month = dateString.substring(4, 6);
-      const day = dateString.substring(6, 8);
-      return `${year}-${month}-${day}`;
-    } catch {
-      return dateString;
-    }
-  };
-
-  const formatTime = (timeString: string) => {
-    if (!timeString) return 'N/A';
-    try {
-      const hours = timeString.substring(0, 2);
-      const minutes = timeString.substring(2, 4);
-      const seconds = timeString.substring(4, 6);
-      return `${hours}:${minutes}:${seconds}`;
-    } catch {
-      return timeString;
-    }
-  };
-
-  const MetadataView = () => (
+  return (
     <div className="w-full h-full bg-black flex items-center justify-center overflow-auto py-8">
       <div className="text-center max-w-4xl w-full mx-4">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-white text-3xl">DICOM Files Loaded Successfully</h1>
           <button
-            onClick={() => setViewMode('mpr')}
+            onClick={onMPRClick}
             className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-full"
           >
             Launch MPR View
@@ -110,6 +61,7 @@ function DicomViewer() {
                     <div className="mb-6">
                       <h3 className="text-green-400 font-semibold mb-3">Patient Information:</h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        {/* Patient Info */}
                         <p className="text-blue-300">
                           Patient Name: <span className="text-white">
                             {getMetadataValue(firstStudy.metadata, 'PatientName')}
@@ -143,6 +95,7 @@ function DicomViewer() {
                       </div>
                     </div>
 
+                    {/* Study Information Section */}
                     <div className="mb-6">
                       <h3 className="text-green-400 font-semibold mb-3">Study Information:</h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -169,6 +122,7 @@ function DicomViewer() {
                       </div>
                     </div>
 
+                    {/* Technical Information Section */}
                     <div className="mb-6">
                       <h3 className="text-green-400 font-semibold mb-3">Image Technical Information:</h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -232,20 +186,4 @@ function DicomViewer() {
       </div>
     </div>
   );
-
-  const MPRView = () => (
-    <div className="relative w-full h-full">
-      <button
-        onClick={() => setViewMode('metadata')}
-        className="absolute top-4 right-4 z-10 bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-full"
-      >
-        Back to Metadata
-      </button>
-      <MPRViewer />
-    </div>
-  );
-
-  return viewMode === 'metadata' ? <MetadataView /> : <MPRView />;
 }
-
-export default DicomViewer;

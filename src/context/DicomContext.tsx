@@ -1,20 +1,9 @@
-// components/DicomViewer/DicomViewerContext.tsx
+// src/context/DicomContext.ts
 import React, { createContext, useContext, useState } from 'react';
 // @ts-expect-error no type definitions
 import dcmjs from 'dcmjs';
 import dicomImageLoader from '@cornerstonejs/dicom-image-loader';
-
-interface Study {
-  studyInstanceUID: string;
-  imageIds: string[];
-  metadata?: any;
-}
-
-interface DicomViewerState {
-  studies: Study[];
-  isLoading: boolean;
-  error: string | null;
-}
+import { DicomViewerState } from '../types/dicom';
 
 interface DicomViewerContextType {
   state: DicomViewerState;
@@ -61,14 +50,12 @@ export function DicomViewerProvider({ children }: { children: React.ReactNode })
       const dataset = loader.getDataset(image, imageId);
       
       if (dataset.StudyInstanceUID) {
-        // 기존 study를 찾거나 새로 생성
         setState(prev => {
           const existingStudyIndex = prev.studies.findIndex(
             study => study.studyInstanceUID === dataset.StudyInstanceUID
           );
 
           if (existingStudyIndex >= 0) {
-            // 기존 study에 imageId 추가
             const updatedStudies = [...prev.studies];
             updatedStudies[existingStudyIndex] = {
               ...updatedStudies[existingStudyIndex],
@@ -76,7 +63,6 @@ export function DicomViewerProvider({ children }: { children: React.ReactNode })
             };
             return { ...prev, studies: updatedStudies };
           } else {
-            // 새로운 study 생성
             return {
               ...prev,
               studies: [...prev.studies, {
@@ -104,7 +90,10 @@ export function DicomViewerProvider({ children }: { children: React.ReactNode })
       await Promise.all(processPromises);
     } catch (error: unknown) {
       console.error(error);
-
+      setState(prev => ({
+        ...prev,
+        error: error instanceof Error ? error.message : 'An unknown error occurred'
+      }));
     } finally {
       setState(prev => ({ ...prev, isLoading: false }));
     }

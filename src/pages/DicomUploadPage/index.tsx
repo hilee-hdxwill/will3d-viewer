@@ -1,37 +1,22 @@
-// Local.tsx
-import React, { useState } from 'react';
+// src/pages/DicomUploadPage/index.tsx
 import Dropzone from 'react-dropzone';
-import { useDicomViewer } from '../DicomViewer/DicomViewerContext';
-import DicomViewer from '../DicomViewer/DicomViewer';
+import { useDicomViewer } from '../../context/DicomContext';
+import { LoadingSpinner } from '@/components/LoadingSpinner';
 
-function Local() {
-  const [isLoading, setIsLoading] = useState(false);
+export function DicomUploadPage({ onUploadSuccess }: { onUploadSuccess: () => void }) {
   const { state, loadDicomFiles } = useDicomViewer();
 
   const onDrop = async (acceptedFiles: File[]) => {
-    setIsLoading(true);
     try {
       await loadDicomFiles(acceptedFiles);
+      onUploadSuccess();
     } catch (error) {
       console.error('Error loading DICOM files:', error);
-    } finally {
-      setIsLoading(false);
     }
   };
 
-  if (state.studies.length > 0) {
-    return <DicomViewer />;
-  }
-
-  if (isLoading) {
-    return (
-      <div className="flex h-full w-full items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
-          <div className="text-white text-lg">Loading DICOM files...</div>
-        </div>
-      </div>
-    );
+  if (state.isLoading) {
+    return <LoadingSpinner message="Loading DICOM files..." />;
   }
 
   return (
@@ -109,5 +94,3 @@ function Local() {
     </Dropzone>
   );
 }
-
-export default Local;
