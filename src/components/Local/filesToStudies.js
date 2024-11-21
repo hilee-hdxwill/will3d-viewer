@@ -1,3 +1,4 @@
+// components/Local/fileToStudies.js
 import FileLoaderService from './fileLoaderService';
 import { DicomMetadataStore } from '@ohif/core';
 

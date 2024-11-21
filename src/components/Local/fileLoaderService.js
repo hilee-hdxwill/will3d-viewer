@@ -1,5 +1,5 @@
+// components/Local/fileLoaderService.js
 import dicomImageLoader from '@cornerstonejs/dicom-image-loader';
-
 import FileLoader from './fileLoader';
 import PDFFileLoader from './pdfFileLoader';
 import DICOMFileLoader from './dicomFileLoader';

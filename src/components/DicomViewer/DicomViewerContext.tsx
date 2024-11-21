@@ -1,4 +1,4 @@
-// contexts/DicomViewerContext.tsx
+// components/DicomViewer/DicomViewerContext.tsx
 import React, { createContext, useContext, useState } from 'react';
 // @ts-expect-error no type definitions
 import dcmjs from 'dcmjs';

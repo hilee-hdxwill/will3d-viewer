@@ -1,4 +1,4 @@
-// components/DicomViewer/index.tsx
+// components/DicomViewer/DicomViewer.tsx
 import React, { useState } from 'react';
 import { useDicomViewer } from './DicomViewerContext';
 import MPRViewer from './MPRViewer';

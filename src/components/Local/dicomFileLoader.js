@@ -1,3 +1,4 @@
+// components/Local/dicomFileLoader.js
 import dcmjs from 'dcmjs';
 import dicomImageLoader from '@cornerstonejs/dicom-image-loader';
 import FileLoader from './fileLoader';
