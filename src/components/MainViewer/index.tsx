@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useDicomViewer } from '../../context/DicomContext';
 import { DicomUploadPage } from '../../pages/DicomUploadPage';
 import { DicomInfoPage } from '../../pages/DicomInfoPage';
+import { DicomMprPage } from '../../pages/DicomMprPage';
 
 type ViewMode = 'upload' | 'metadata' | 'mpr';
 
@@ -24,6 +25,9 @@ export function MainViewer() {
       )}
       {viewMode === 'metadata' && (
         <DicomInfoPage onMPRClick={() => setViewMode('mpr')} />
+      )}
+      {viewMode === 'mpr' && (
+        <DicomMprPage onBack={() => setViewMode('metadata')} />
       )}
     </div>
   );
