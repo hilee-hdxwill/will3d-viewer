@@ -18,7 +18,7 @@ class DicomFileLoader {
     return dicomImageLoader.wadouri.fileManager.add(file);
   }
 
-  async loadFile(file: File, imageId: string) {
+  async loadFile(imageId: string) {
     return dicomImageLoader.wadouri.loadFileRequest(imageId);
   }
 
@@ -46,7 +46,7 @@ export function DicomViewerProvider({ children }: { children: React.ReactNode })
     try {
       const loader = new DicomFileLoader();
       const imageId = loader.addFile(file);
-      const image = await loader.loadFile(file, imageId);
+      const image = await loader.loadFile(imageId);
       const dataset = loader.getDataset(image, imageId);
       
       if (dataset.StudyInstanceUID) {
