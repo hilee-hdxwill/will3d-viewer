@@ -7,7 +7,6 @@ import {
   Enums,
   volumeLoader,
   cache,
-  CONSTANTS,
 } from '@cornerstonejs/core';
 import { init as csToolsInit } from '@cornerstonejs/tools';
 import { useDicomViewer } from './DicomViewerContext';
@@ -63,10 +62,6 @@ function MPRViewer() {
         // VolumeLoaderOptions 타입에 맞게 수정
         const volume = await volumeLoader.createAndCacheVolume(volumeId, {
           imageIds,
-          options: {
-            targetSpacing: [1, 1, 3], // spacing을 options 내부로 이동
-            orientation: Enums.OrientationAxis.AXIAL,
-          },
         });
 
         // 볼륨 로드
