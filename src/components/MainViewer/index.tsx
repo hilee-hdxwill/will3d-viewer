@@ -1,22 +1,27 @@
 // src/components/MainViewer/index.tsx
 import React, { useState } from 'react';
-import { useDicomViewer } from '../../context/DicomContext';
-import { DicomUploadPage } from '../../pages/DicomUploadPage';
-import { DicomInfoPage } from '../../pages/DicomInfoPage';
-import { DicomMprPage } from '../../pages/DicomMprPage';
+import { useDicomViewer } from '@/context/DicomContext';
+import { DicomUploadPage } from '@/pages/DicomUploadPage';
+import { DicomInfoPage } from '@/pages/DicomInfoPage';
+import { StudyListPage } from '@/pages/StudyListPage';
 
-type ViewMode = 'upload' | 'metadata' | 'mpr';
+type ViewMode = 'upload' | 'metadata' | 'studyList' | 'mpr';
 
 export function MainViewer() {
   const [viewMode, setViewMode] = useState<ViewMode>('upload');
+  const [selectedStudyUID, setSelectedStudyUID] = useState<string | undefined>();
   const { state } = useDicomViewer();
 
-  // studies가 있으면 metadata 뷰로 자동 전환
   React.useEffect(() => {
     if (state.studies.length > 0 && viewMode === 'upload') {
       setViewMode('metadata');
     }
   }, [state.studies.length, viewMode]);
+
+  const handleViewImages = (studyUID: string) => {
+    setSelectedStudyUID(studyUID);
+    setViewMode('studyList');
+  };
 
   return (
     <div className="w-full h-full">
@@ -24,11 +29,25 @@ export function MainViewer() {
         <DicomUploadPage onUploadSuccess={() => setViewMode('metadata')} />
       )}
       {viewMode === 'metadata' && (
-        <DicomInfoPage onMPRClick={() => setViewMode('mpr')} />
+        <DicomInfoPage 
+          onStudyListClick={() => setViewMode('studyList')} 
+        />
       )}
-      {viewMode === 'mpr' && (
-        <DicomMprPage onBack={() => setViewMode('metadata')} />
+      {viewMode === 'studyList' && (
+        <StudyListPage 
+          onBack={() => setViewMode('metadata')}
+          onViewImages={handleViewImages}
+        />
       )}
+      {/* {viewMode === 'mpr' && (
+        <DicomMprPage 
+          studyInstanceUID={selectedStudyUID}
+          onBack={() => {
+            setSelectedStudyUID(undefined);
+            setViewMode('metadata');
+          }} 
+        />
+      )} */}
     </div>
   );
 }

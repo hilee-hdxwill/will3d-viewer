@@ -1,18 +1,19 @@
 // src/components/DicomMetadataViewer/index.tsx
 import { useState } from 'react';
-import { useDicomViewer } from '../../context/DicomContext';
-import { getMetadataValue, formatDate, formatTime } from '../../utils/dicomUtils';
+import { useDicomViewer } from '@/context/DicomContext';
+import { getMetadataValue, formatDate, formatTime } from '@/utils/dicomUtils';
 
 interface DicomMetadataViewerProps {
-  onMPRClick: () => void;
+  onStudyListClick: () => void;
 }
 
-export function DicomMetadataViewer({ onMPRClick }: DicomMetadataViewerProps) {
+export function DicomMetadataViewer({ onStudyListClick }: DicomMetadataViewerProps) {
   const { state } = useDicomViewer();
   const [showDetails, setShowDetails] = useState(false);
 
-  const firstStudy = state.studies[0];
-  const totalImages = state.studies.reduce((total, study) => 
+  const studiesArray = Array.isArray(state.studies) ? state.studies : [];
+  const firstStudy = studiesArray[0];
+  const totalImages = studiesArray.reduce((total, study) => 
     total + (study.imageIds?.length || 0), 0);
 
   return (
@@ -21,10 +22,10 @@ export function DicomMetadataViewer({ onMPRClick }: DicomMetadataViewerProps) {
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-white text-3xl">DICOM Files Loaded Successfully</h1>
           <button
-            onClick={onMPRClick}
+            onClick={onStudyListClick}
             className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-full"
           >
-            Launch MPR View
+            Go Study Table
           </button>
         </div>
         

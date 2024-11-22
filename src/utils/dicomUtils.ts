@@ -1,5 +1,4 @@
 // src/utils/dicomUtils.ts
-
 export const getMetadataValue = (metadata: any, key: string) => {
     if (!metadata || !metadata[key]) return 'N/A';
     

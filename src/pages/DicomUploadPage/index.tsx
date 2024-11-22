@@ -1,6 +1,6 @@
 // src/pages/DicomUploadPage/index.tsx
 import Dropzone from 'react-dropzone';
-import { useDicomViewer } from '../../context/DicomContext';
+import { useDicomViewer } from '@/context/DicomContext';
 import { LoadingSpinner } from '@/components/LoadingSpinner';
 
 export function DicomUploadPage({ onUploadSuccess }: { onUploadSuccess: () => void }) {
