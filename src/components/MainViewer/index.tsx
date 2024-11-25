@@ -4,12 +4,13 @@ import { useDicomViewer } from '@/context/DicomContext';
 import { DicomUploadPage } from '@/pages/DicomUploadPage';
 import { DicomInfoPage } from '@/pages/DicomInfoPage';
 import { StudyListPage } from '@/pages/StudyListPage';
+import { DicomViewer } from '@/components/DicomViewer';
 
-type ViewMode = 'upload' | 'metadata' | 'studyList' | 'mpr';
+type ViewMode = 'upload' | 'metadata' | 'studyList' | 'mpr' | 'dicomViewer';  // dicomViewer 추가
 
 export function MainViewer() {
   const [viewMode, setViewMode] = useState<ViewMode>('upload');
-  const [selectedStudyUID, setSelectedStudyUID] = useState<string | undefined>();
+  const [selectedStudy, setSelectedStudy] = useState<any>(null);  // 선택된 study 저장
   const { state } = useDicomViewer();
 
   React.useEffect(() => {
@@ -19,8 +20,11 @@ export function MainViewer() {
   }, [state.studies.length, viewMode]);
 
   const handleViewImages = (studyUID: string) => {
-    setSelectedStudyUID(studyUID);
-    setViewMode('studyList');
+    const study = state.studies.find(s => s.studyInstanceUID === studyUID);
+    if (study) {
+      setSelectedStudy(study);
+      setViewMode('dicomViewer');
+    }
   };
 
   return (
@@ -39,15 +43,12 @@ export function MainViewer() {
           onViewImages={handleViewImages}
         />
       )}
-      {/* {viewMode === 'mpr' && (
-        <DicomMprPage 
-          studyInstanceUID={selectedStudyUID}
-          onBack={() => {
-            setSelectedStudyUID(undefined);
-            setViewMode('metadata');
-          }} 
+      {viewMode === 'dicomViewer' && selectedStudy && (
+        <DicomViewer 
+          study={selectedStudy}
+          onBack={() => setViewMode('studyList')} 
         />
-      )} */}
+      )}
     </div>
   );
 }

@@ -1,28 +1,34 @@
 // src/components/DicomViewer/cornerstone/helpers.ts
-import * as cornerstone from '@cornerstonejs/core';
+import { RenderingEngine, Enums, Types, StackViewport } from '@cornerstonejs/core';
 
-export interface ViewportOptions {
+export interface ViewportInput {
   element: HTMLDivElement;
+  studyUID: string;
   imageIds: string[];
-  viewportId?: string;
 }
 
-export async function createViewport({ element, imageIds, viewportId = 'DEFAULT' }: ViewportOptions) {
+export async function createViewport({ element, studyUID, imageIds }: ViewportInput) {
   try {
-    const renderingEngine = new cornerstone.RenderingEngine(viewportId);
-    
-    const viewportInput = {
-      viewportId,
+    // 새로운 렌더링 엔진 생성
+    const renderingEngine = new RenderingEngine(studyUID);
+
+    // 뷰포트 설정
+    const viewportInput: Types.PublicViewportInput = {
+      viewportId: studyUID,
       element,
-      type: cornerstone.Enums.ViewportType.STACK,
+      type: Enums.ViewportType.STACK,
     };
 
+    // 뷰포트 활성화
     renderingEngine.enableElement(viewportInput);
 
-    const viewport = renderingEngine.getViewport(viewportId);
+    // 뷰포트 가져오기
+    const viewport = renderingEngine.getViewport(studyUID) as StackViewport;
 
+    // 이미지 로드
     await viewport.setStack(imageIds);
-    
+
+    // 렌더링
     viewport.render();
 
     return viewport;
@@ -32,17 +38,10 @@ export async function createViewport({ element, imageIds, viewportId = 'DEFAULT'
   }
 }
 
-export function getImageIdsFromDicomStudy(study: any) {
-  const imageIds: string[] = [];
-  if (Array.isArray(study.imageIds)) {
-    study.imageIds.forEach((imageId: string) => {
-      // dicomfile:// 프로토콜로 변환
-      if (!imageId.startsWith('dicomfile://')) {
-        imageIds.push(`dicomfile://${imageId}`);
-      } else {
-        imageIds.push(imageId);
-      }
-    });
+export function formatImageId(imageId: string): string {
+  if (imageId.includes('://')) {
+    return imageId; // 이미 프로토콜이 있는 경우
   }
-  return imageIds;
+  // 로컬 파일 경로로 가정
+  return `dicomfile://${imageId}`;
 }

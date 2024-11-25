@@ -1,5 +1,5 @@
 // src/components/StudyList/index.tsx
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useDicomViewer } from '@/context/DicomContext';
 import { formatDate, formatTime, getMetadataValue } from '@/utils/dicomUtils';
 import { DicomStudy } from '@/types/dicom';
@@ -12,6 +12,10 @@ interface StudyListProps {
 
 export function StudyList({ onBack, onViewImages }: StudyListProps) {
   const { state } = useDicomViewer();
+  useEffect(() => {
+    console.log('StudyList에서 받은 studies:', state.studies);
+  }, [state.studies]);
+
   const [expandedStudyUID, setExpandedStudyUID] = useState<string | null>(null);
   const studiesArray = Array.isArray(state.studies) ? state.studies : [];
 
