@@ -10,9 +10,10 @@ interface DicomViewerProps {
 
 export function DicomViewer({ study, onBack }: DicomViewerProps) {
   useEffect(() => {
-    console.log('DicomViewer로 전달된 study 객체:', study);
+    //console.log('DicomViewer로 전달된 study 객체:', study);
     //console.log('study의 imageIds:', study.imageIds);
     //console.log('study의 metadata:', study.metadata);
+
     //initCornerstone().catch(console.error);
     
     // return () => {
