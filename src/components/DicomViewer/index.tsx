@@ -1,7 +1,7 @@
 // src/components/DicomViewer/index.tsx
-import { useEffect } from 'react';
-//import { initCornerstone, cleanupCornerstone } from './cornerstone/cornerstoneInit';
-import { ViewportGrid } from './ViewportGrid';
+import { useEffect, useState } from 'react';
+import { initCornerstone, cleanupCornerstone } from './cornerstone/cornerstoneInit';
+//import { ViewportGrid } from './ViewportGrid';
 
 interface DicomViewerProps {
   study: any;  // 나중에 타입을 더 구체적으로 정의할 예정
@@ -9,17 +9,33 @@ interface DicomViewerProps {
 }
 
 export function DicomViewer({ study, onBack }: DicomViewerProps) {
-  useEffect(() => {
-    //console.log('DicomViewer로 전달된 study 객체:', study);
-    //console.log('study의 imageIds:', study.imageIds);
-    //console.log('study의 metadata:', study.metadata);
+  const [isInitialized, setIsInitialized] = useState(false);
 
-    //initCornerstone().catch(console.error);
-    
-    // return () => {
-    //   cleanupCornerstone();
-    // };
-  }, [study]);
+  useEffect(() => {
+    let mounted = true;
+
+    const init = async () => {
+      try {
+        await initCornerstone();
+        if (mounted) {
+          setIsInitialized(true);
+        }
+      } catch (error) {
+        console.error('DicomViewer: Cornerstone 초기화 실패:', error);
+      }
+    };
+
+    init();
+
+    return () => {
+      mounted = false;
+      cleanupCornerstone();
+    };
+  }, []);
+
+  if (!isInitialized) {
+    return <div>Initializing viewer...</div>;
+  }
 
   return (
     <div className="flex h-full w-full flex-col bg-black">
@@ -33,7 +49,7 @@ export function DicomViewer({ study, onBack }: DicomViewerProps) {
         </button>
       </div>
       <div className="flex-1">
-        <ViewportGrid study={study} />
+        {/* <ViewportGrid study={study} /> */}
       </div>
     </div>
   );
