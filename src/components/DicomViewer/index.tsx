@@ -1,6 +1,6 @@
 // src/components/DicomViewer/index.tsx
 import { useEffect } from 'react';
-import { initCornerstone, cleanupCornerstone } from './cornerstone/cornerstoneInit';
+//import { initCornerstone, cleanupCornerstone } from './cornerstone/cornerstoneInit';
 import { ViewportGrid } from './ViewportGrid';
 
 interface DicomViewerProps {
@@ -11,13 +11,13 @@ interface DicomViewerProps {
 export function DicomViewer({ study, onBack }: DicomViewerProps) {
   useEffect(() => {
     console.log('DicomViewer로 전달된 study 객체:', study);
-    console.log('study의 imageIds:', study.imageIds);
-    console.log('study의 metadata:', study.metadata);
-    initCornerstone().catch(console.error);
+    //console.log('study의 imageIds:', study.imageIds);
+    //console.log('study의 metadata:', study.metadata);
+    //initCornerstone().catch(console.error);
     
-    return () => {
-      cleanupCornerstone();
-    };
+    // return () => {
+    //   cleanupCornerstone();
+    // };
   }, [study]);
 
   return (

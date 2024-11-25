@@ -13,8 +13,8 @@ export function ViewportGrid({ study }: ViewportGridProps) {
   useEffect(() => {
     console.log('ViewportGrid로 전달된 study:', study);
     if (!viewportRef.current || !study || !study.imageIds?.length) return;
-    console.log('Viewport element:', viewportRef.current);
-    console.log('Study imageIds:', study.imageIds);
+    //console.log('Viewport element:', viewportRef.current);
+    //console.log('Study imageIds:', study.imageIds);
 
     const element = viewportRef.current;
     // 이미지 ID 형식 변환

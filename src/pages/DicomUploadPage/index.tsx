@@ -8,7 +8,7 @@ export function DicomUploadPage({ onUploadSuccess }: { onUploadSuccess: () => vo
 
   const onDrop = async (acceptedFiles: File[]) => {
     try {
-      console.log('업로드된 파일들:', acceptedFiles);
+      //console.log('업로드된 파일들:', acceptedFiles);
       await loadDicomFiles(acceptedFiles);
       console.log('DICOM 파일 로드 완료:', state.studies);
       onUploadSuccess();
