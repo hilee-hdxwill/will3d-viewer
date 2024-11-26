@@ -5,6 +5,7 @@ import dcmjs from 'dcmjs';
 import dicomImageLoader from '@cornerstonejs/dicom-image-loader';
 import { DicomViewerState } from '@/types/dicom';
 import { extractRenderingMetadata } from '@/utils/dicomUtils';
+import { DicomMetadataStore } from '@/utils/DicomMetadataStore';
 
 interface DicomViewerContextType {
   state: DicomViewerState;
@@ -56,34 +57,9 @@ export function DicomViewerProvider({ children }: { children: React.ReactNode })
       const imageId = loader.addFile(file);
       const image = await loader.loadFile(imageId);
 
-      //const dataset = loader.getDataset(image, imageId);
-      // if (dataset.StudyInstanceUID) {
-      //   setState(prev => {
-      //     const existingStudyIndex = prev.studies.findIndex(
-      //       study => study.studyInstanceUID === dataset.StudyInstanceUID
-      //     );
-
-      //     if (existingStudyIndex >= 0) {
-      //       const updatedStudies = [...prev.studies];
-      //       updatedStudies[existingStudyIndex] = {
-      //         ...updatedStudies[existingStudyIndex],
-      //         imageIds: [...updatedStudies[existingStudyIndex].imageIds, imageId],
-      //       };
-      //       return { ...prev, studies: updatedStudies };
-      //     } else {
-      //       return {
-      //         ...prev,
-      //         studies: [...prev.studies, {
-      //           studyInstanceUID: dataset.StudyInstanceUID,
-      //           imageIds: [imageId],
-      //           metadata: dataset
-      //         }],
-      //       };
-      //     }
-      //   });
-      // }
-
       const { dataset, renderingMetadata } = loader.getDataset(image, imageId);
+      DicomMetadataStore.addInstance(dataset);
+      
       if (dataset.StudyInstanceUID) {
         setState(prev => {
             const existingStudyIndex = prev.studies.findIndex(

@@ -11,6 +11,7 @@ import {
 } from '@cornerstonejs/core';
 import { init as dicomImageLoaderInit } from '@cornerstonejs/dicom-image-loader';
 import { DicomStudy } from '@/types/dicom';
+import { DicomMetadataStore } from '@/utils/DicomMetadataStore';
 
 const { ViewportType } = Enums;
 
@@ -47,40 +48,75 @@ export const Viewport: React.FC<ViewportProps> = ({ study }) => {
 
     const setupViewport = async () => {
       try {
-        // Clear cache before loading new study
-        console.log('📑 Rendering Metadata for Study:', {
-          studyInstanceUID: study.studyInstanceUID,
-          imageCount: study.imageIds.length,
-          renderingMetadata: {
-            // 이미지 데이터 관련
-            dimensions: {
-              rows: study.renderingMetadata.rows,
-              columns: study.renderingMetadata.columns,
-            },
-            pixelData: {
-              bitsAllocated: study.renderingMetadata.bitsAllocated,
-              bitsStored: study.renderingMetadata.bitsStored,
-              highBit: study.renderingMetadata.highBit,
-              pixelRepresentation: study.renderingMetadata.pixelRepresentation,
-            },
-            // 이미지 표시 관련
-            windowSettings: {
-              windowCenter: study.renderingMetadata.windowCenter,
-              windowWidth: study.renderingMetadata.windowWidth,
-              rescaleIntercept: study.renderingMetadata.rescaleIntercept,
-              rescaleSlope: study.renderingMetadata.rescaleSlope,
-            },
-            // 3D 볼륨 관련
-            volumeData: {
-              imagePosition: study.renderingMetadata.imagePosition,
-              imageOrientation: study.renderingMetadata.imageOrientation,
-              pixelSpacing: study.renderingMetadata.pixelSpacing,
-              sliceThickness: study.renderingMetadata.sliceThickness,
-              spacingBetweenSlices: study.renderingMetadata.spacingBetweenSlices,
-            },
-            photometricInterpretation: study.renderingMetadata.photometricInterpretation,
-          }
-        });
+        console.log('📑 DicomMetadataStore');
+        // 1. 모든 StudyInstanceUID 목록 확인
+        const studyUIDs = DicomMetadataStore.getStudyInstanceUIDs();
+        console.log('All Study UIDs:', studyUIDs);
+
+        // 2. 첫 번째 Study의 전체 정보 확인
+        if (studyUIDs.length > 0) {
+          const firstStudy = DicomMetadataStore.getStudy(studyUIDs[0]);
+          console.log('First Study Details:', {
+              StudyInstanceUID: firstStudy.StudyInstanceUID,
+              PatientName: firstStudy.PatientName,
+              StudyDate: firstStudy.StudyDate,
+              NumberOfSeries: firstStudy.series.length
+          });
+
+          // 3. 첫 번째 Study의 모든 Series 정보 확인
+          firstStudy.series.forEach(series => {
+              console.log('Series Info:', {
+                  SeriesInstanceUID: series.SeriesInstanceUID,
+                  SeriesNumber: series.SeriesNumber,
+                  Modality: series.Modality,
+                  NumberOfInstances: series.instances.length
+              });
+
+              // 4. 각 Series의 첫 번째 Instance 정보 확인
+              if (series.instances.length > 0) {
+                  console.log('First Instance in Series:', {
+                      SOPInstanceUID: series.instances[0].SOPInstanceUID,
+                      ImageId: series.instances[0].imageId,
+                      Rows: series.instances[0].Rows,
+                      Columns: series.instances[0].Columns
+                  });
+              }
+          });
+        }
+        // // Clear cache before loading new study
+        // console.log('📑 Rendering Metadata for Study:', {
+        //   studyInstanceUID: study.studyInstanceUID,
+        //   imageCount: study.imageIds.length,
+        //   renderingMetadata: {
+        //     // 이미지 데이터 관련
+        //     dimensions: {
+        //       rows: study.renderingMetadata.rows,
+        //       columns: study.renderingMetadata.columns,
+        //     },
+        //     pixelData: {
+        //       bitsAllocated: study.renderingMetadata.bitsAllocated,
+        //       bitsStored: study.renderingMetadata.bitsStored,
+        //       highBit: study.renderingMetadata.highBit,
+        //       pixelRepresentation: study.renderingMetadata.pixelRepresentation,
+        //     },
+        //     // 이미지 표시 관련
+        //     windowSettings: {
+        //       windowCenter: study.renderingMetadata.windowCenter,
+        //       windowWidth: study.renderingMetadata.windowWidth,
+        //       rescaleIntercept: study.renderingMetadata.rescaleIntercept,
+        //       rescaleSlope: study.renderingMetadata.rescaleSlope,
+        //     },
+        //     // 3D 볼륨 관련
+        //     volumeData: {
+        //       imagePosition: study.renderingMetadata.imagePosition,
+        //       imageOrientation: study.renderingMetadata.imageOrientation,
+        //       pixelSpacing: study.renderingMetadata.pixelSpacing,
+        //       sliceThickness: study.renderingMetadata.sliceThickness,
+        //       spacingBetweenSlices: study.renderingMetadata.spacingBetweenSlices,
+        //     },
+        //     photometricInterpretation: study.renderingMetadata.photometricInterpretation,
+        //   }
+        // });
         cache.purgeCache();
 
         // Register metadata provider
