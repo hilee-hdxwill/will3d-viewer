@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState } from 'react';
 import dcmjs from 'dcmjs';
 import dicomImageLoader from '@cornerstonejs/dicom-image-loader';
 import { DicomViewerState } from '@/types/dicom';
+//import { DicomMetadataStore } from '@ohif/core';
 
 interface DicomViewerContextType {
   state: DicomViewerState;
@@ -48,7 +49,8 @@ export function DicomViewerProvider({ children }: { children: React.ReactNode })
       const imageId = loader.addFile(file);
       const image = await loader.loadFile(imageId);
       const dataset = loader.getDataset(image, imageId);
-      
+      //DicomMetadataStore.addInstance(dataset);
+
       if (dataset.StudyInstanceUID) {
         setState(prev => {
           const existingStudyIndex = prev.studies.findIndex(
