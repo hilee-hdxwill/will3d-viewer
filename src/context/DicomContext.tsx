@@ -4,7 +4,7 @@ import React, { createContext, useContext, useState } from 'react';
 import dcmjs from 'dcmjs';
 import dicomImageLoader from '@cornerstonejs/dicom-image-loader';
 import { DicomViewerState } from '@/types/dicom';
-//import { DicomMetadataStore } from '@ohif/core';
+import { extractRenderingMetadata } from '@/utils/dicomUtils';
 
 interface DicomViewerContextType {
   state: DicomViewerState;
@@ -32,7 +32,14 @@ class DicomFileLoader {
     dataset.AvailableTransferSyntaxUID =
       dataset.AvailableTransferSyntaxUID || dataset._meta.TransferSyntaxUID?.Value?.[0];
 
-    return dataset;
+    //return dataset;
+    // 렌더링 메타데이터 추출
+    const renderingMetadata = extractRenderingMetadata(dataset);
+
+    return {
+        dataset,
+        renderingMetadata
+    };
   }
 }
 
@@ -48,34 +55,65 @@ export function DicomViewerProvider({ children }: { children: React.ReactNode })
       const loader = new DicomFileLoader();
       const imageId = loader.addFile(file);
       const image = await loader.loadFile(imageId);
-      const dataset = loader.getDataset(image, imageId);
-      //DicomMetadataStore.addInstance(dataset);
 
+      //const dataset = loader.getDataset(image, imageId);
+      // if (dataset.StudyInstanceUID) {
+      //   setState(prev => {
+      //     const existingStudyIndex = prev.studies.findIndex(
+      //       study => study.studyInstanceUID === dataset.StudyInstanceUID
+      //     );
+
+      //     if (existingStudyIndex >= 0) {
+      //       const updatedStudies = [...prev.studies];
+      //       updatedStudies[existingStudyIndex] = {
+      //         ...updatedStudies[existingStudyIndex],
+      //         imageIds: [...updatedStudies[existingStudyIndex].imageIds, imageId],
+      //       };
+      //       return { ...prev, studies: updatedStudies };
+      //     } else {
+      //       return {
+      //         ...prev,
+      //         studies: [...prev.studies, {
+      //           studyInstanceUID: dataset.StudyInstanceUID,
+      //           imageIds: [imageId],
+      //           metadata: dataset
+      //         }],
+      //       };
+      //     }
+      //   });
+      // }
+
+      const { dataset, renderingMetadata } = loader.getDataset(image, imageId);
       if (dataset.StudyInstanceUID) {
         setState(prev => {
-          const existingStudyIndex = prev.studies.findIndex(
-            study => study.studyInstanceUID === dataset.StudyInstanceUID
-          );
+            const existingStudyIndex = prev.studies.findIndex(
+                study => study.studyInstanceUID === dataset.StudyInstanceUID
+            );
 
-          if (existingStudyIndex >= 0) {
-            const updatedStudies = [...prev.studies];
-            updatedStudies[existingStudyIndex] = {
-              ...updatedStudies[existingStudyIndex],
-              imageIds: [...updatedStudies[existingStudyIndex].imageIds, imageId],
-            };
-            return { ...prev, studies: updatedStudies };
-          } else {
-            return {
-              ...prev,
-              studies: [...prev.studies, {
-                studyInstanceUID: dataset.StudyInstanceUID,
-                imageIds: [imageId],
-                metadata: dataset
-              }],
-            };
-          }
+            if (existingStudyIndex >= 0) {
+                const updatedStudies = [...prev.studies];
+                updatedStudies[existingStudyIndex] = {
+                    ...updatedStudies[existingStudyIndex],
+                    imageIds: [...updatedStudies[existingStudyIndex].imageIds, imageId],
+                    renderingMetadata: {
+                        ...updatedStudies[existingStudyIndex].renderingMetadata,
+                        ...renderingMetadata
+                    }
+                };
+                return { ...prev, studies: updatedStudies };
+            } else {
+                return {
+                    ...prev,
+                    studies: [...prev.studies, {
+                        studyInstanceUID: dataset.StudyInstanceUID,
+                        imageIds: [imageId],
+                        renderingMetadata,
+                        metadata: dataset
+                    }],
+                };
+            }
         });
-      }
+    }
 
       return dataset;
     } catch (error) {

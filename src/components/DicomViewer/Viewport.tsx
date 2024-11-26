@@ -48,6 +48,39 @@ export const Viewport: React.FC<ViewportProps> = ({ study }) => {
     const setupViewport = async () => {
       try {
         // Clear cache before loading new study
+        console.log('📑 Rendering Metadata for Study:', {
+          studyInstanceUID: study.studyInstanceUID,
+          imageCount: study.imageIds.length,
+          renderingMetadata: {
+            // 이미지 데이터 관련
+            dimensions: {
+              rows: study.renderingMetadata.rows,
+              columns: study.renderingMetadata.columns,
+            },
+            pixelData: {
+              bitsAllocated: study.renderingMetadata.bitsAllocated,
+              bitsStored: study.renderingMetadata.bitsStored,
+              highBit: study.renderingMetadata.highBit,
+              pixelRepresentation: study.renderingMetadata.pixelRepresentation,
+            },
+            // 이미지 표시 관련
+            windowSettings: {
+              windowCenter: study.renderingMetadata.windowCenter,
+              windowWidth: study.renderingMetadata.windowWidth,
+              rescaleIntercept: study.renderingMetadata.rescaleIntercept,
+              rescaleSlope: study.renderingMetadata.rescaleSlope,
+            },
+            // 3D 볼륨 관련
+            volumeData: {
+              imagePosition: study.renderingMetadata.imagePosition,
+              imageOrientation: study.renderingMetadata.imageOrientation,
+              pixelSpacing: study.renderingMetadata.pixelSpacing,
+              sliceThickness: study.renderingMetadata.sliceThickness,
+              spacingBetweenSlices: study.renderingMetadata.spacingBetweenSlices,
+            },
+            photometricInterpretation: study.renderingMetadata.photometricInterpretation,
+          }
+        });
         cache.purgeCache();
 
         // Register metadata provider

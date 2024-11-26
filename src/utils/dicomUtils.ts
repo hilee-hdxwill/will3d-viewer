@@ -1,4 +1,32 @@
 // src/utils/dicomUtils.ts
+import { DicomImageMetadata } from '@/types/dicom';
+
+export const extractRenderingMetadata = (dataset: any): DicomImageMetadata => {
+  return {
+    // 이미지 데이터 관련
+    rows: Number(getMetadataValue(dataset, 'Rows')),
+    columns: Number(getMetadataValue(dataset, 'Columns')),
+    bitsAllocated: Number(getMetadataValue(dataset, 'BitsAllocated')),
+    bitsStored: Number(getMetadataValue(dataset, 'BitsStored')),
+    highBit: Number(getMetadataValue(dataset, 'HighBit')),
+    pixelRepresentation: Number(getMetadataValue(dataset, 'PixelRepresentation')),
+    
+    // 이미지 표시 관련
+    windowCenter: Number(getMetadataValue(dataset, 'WindowCenter')),
+    windowWidth: Number(getMetadataValue(dataset, 'WindowWidth')),
+    rescaleIntercept: Number(getMetadataValue(dataset, 'RescaleIntercept')),
+    rescaleSlope: Number(getMetadataValue(dataset, 'RescaleSlope')),
+    photometricInterpretation: getMetadataValue(dataset, 'PhotometricInterpretation'),
+    
+    // 3D 볼륨 관련
+    imagePosition: dataset.ImagePositionPatient as [number, number, number],
+    imageOrientation: dataset.ImageOrientationPatient as [number, number, number, number, number, number],
+    pixelSpacing: dataset.PixelSpacing ? [Number(dataset.PixelSpacing[0]), Number(dataset.PixelSpacing[1])] as [number, number] : undefined,
+    sliceThickness: Number(dataset.SliceThickness) || undefined,
+    spacingBetweenSlices: Number(dataset.SpacingBetweenSlices) || undefined
+  };
+};
+
 export const getMetadataValue = (metadata: any, key: string) => {
     if (!metadata || !metadata[key]) return 'N/A';
     
