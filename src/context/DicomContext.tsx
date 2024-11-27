@@ -106,6 +106,19 @@ export function DicomViewerProvider({ children }: { children: React.ReactNode })
     try {
       const processPromises = files.map(processFile);
       await Promise.all(processPromises);
+
+      const studyUIDs = DicomMetadataStore.getStudyInstanceUIDs();
+      console.log('📑 DicomMetadataStore uids');
+      console.log(studyUIDs);
+
+      const firstStudy = DicomMetadataStore.getStudy(studyUIDs[0]);
+      console.log('📑 DicomMetadataStore firstStudy info');
+      console.log(firstStudy);
+
+      const firstSeriesUID = firstStudy.series[0].SeriesInstanceUID;
+      const firstSeries = DicomMetadataStore.getSeries(studyUIDs[0], firstSeriesUID);
+      console.log('📑 DicomMetadataStore firstSeries info');
+      console.log(firstSeries);
     } catch (error: unknown) {
       console.error(error);
       setState(prev => ({
