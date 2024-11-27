@@ -119,6 +119,11 @@ export function DicomViewerProvider({ children }: { children: React.ReactNode })
       const firstSeries = DicomMetadataStore.getSeries(studyUIDs[0], firstSeriesUID);
       console.log('📑 DicomMetadataStore firstSeries info');
       console.log(firstSeries);
+
+      const firstSOPInstanceUID = firstSeries.instances[0].SOPInstanceUID;
+      const firstSOPInstance = DicomMetadataStore.getInstance(studyUIDs[0], firstSeriesUID, firstSOPInstanceUID);
+      console.log('📑 DicomMetadataStore firstSeriesSOPInstance info');
+      console.log(firstSOPInstance);
     } catch (error: unknown) {
       console.error(error);
       setState(prev => ({
