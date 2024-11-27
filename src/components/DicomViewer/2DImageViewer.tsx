@@ -33,6 +33,8 @@ const ImageViewer: React.FC<ImageViewerProps> = ({
           console.error('No instances found for series');
           return;
         }
+        console.log('series', series);
+        console.log('PixelData', series.instances[0].PixelData);
 
         // Initialize rendering engine
         const renderingEngineId = 'myRenderingEngine';
