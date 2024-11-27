@@ -25,7 +25,9 @@ export interface DicomImageMetadata {
 
 export interface DicomStudy {
     // 필수 식별자
+    seriesInstanceUID: string;
     studyInstanceUID: string;
+    sopInstanceUID: string;
     imageIds: string[];
     
     // 렌더링 필수 메타데이터

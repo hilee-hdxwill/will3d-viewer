@@ -51,7 +51,13 @@ export function DicomMetadataViewer({ onStudyListClick }: DicomMetadataViewerPro
 
               <div className="space-y-2">
                 <p className="text-blue-300">
+                  Series UID: <span className="text-white">{firstStudy.seriesInstanceUID}</span>
+                </p>
+                <p className="text-blue-300">
                   Study UID: <span className="text-white">{firstStudy.studyInstanceUID}</span>
+                </p>
+                <p className="text-blue-300">
+                  SOP UID: <span className="text-white">{firstStudy.sopInstanceUID}</span>
                 </p>
                 <p className="text-blue-300">
                   Number of Images: <span className="text-white">{firstStudy.imageIds?.length || 0}</span>

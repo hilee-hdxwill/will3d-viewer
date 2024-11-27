@@ -81,7 +81,9 @@ export function DicomViewerProvider({ children }: { children: React.ReactNode })
                 return {
                     ...prev,
                     studies: [...prev.studies, {
+                        seriesInstanceUID: dataset.SeriesInstanceUID,
                         studyInstanceUID: dataset.StudyInstanceUID,
+                        sopInstanceUID: dataset.SOPInstanceUID,
                         imageIds: [imageId],
                         renderingMetadata,
                         metadata: dataset

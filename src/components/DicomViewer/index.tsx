@@ -1,5 +1,6 @@
 // src/components/DicomViewer/index.tsx
 import { Viewport } from '@/components/DicomViewer/Viewport'
+import ImageViewer from '@/components/DicomViewer/2DImageViewer';
 import { DicomStudy } from '@/types/dicom';
 
 export function DicomViewer({ study, onBack }: { study: DicomStudy; onBack: () => void }) {
@@ -14,7 +15,11 @@ export function DicomViewer({ study, onBack }: { study: DicomStudy; onBack: () =
           Back to Study List
         </button>
       </div>
-      <Viewport study={study}/>
+      <ImageViewer 
+        studyInstanceUID={study.studyInstanceUID}
+        seriesInstanceUID={study.seriesInstanceUID}
+      />
+      {/* <Viewport study={study}/> */}
     </div>
   );
 }
