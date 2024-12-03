@@ -1,9 +1,9 @@
 // src/components/StudyList/index.tsx
-import { useState, useMemo, useEffect } from 'react';
-import { useDicomViewer } from '@/context/DicomContext';
-import { formatDate, formatTime, getMetadataValue } from '@/utils/dicomUtils';
-import { DicomStudy } from '@/types/dicom';
-import { StudyListTable } from './StudyListTable';
+import { useState, useMemo, useEffect } from "react";
+import { useDicomViewer } from "@/hooks/useDicomViewer";
+import { formatDate, formatTime, getMetadataValue } from "@/utils/dicomUtils";
+import { DicomStudy } from "@/types/dicom";
+import { StudyListTable } from "./StudyListTable";
 
 interface StudyListProps {
   onBack: () => void;
@@ -13,80 +13,90 @@ interface StudyListProps {
 export function StudyList({ onBack, onViewImages }: StudyListProps) {
   const { state } = useDicomViewer();
   useEffect(() => {
-    console.log('StudyList에서 받은 studies:', state.studies);
+    console.log("StudyList에서 받은 studies:", state.studies);
   }, [state.studies]);
 
   const [expandedStudyUID, setExpandedStudyUID] = useState<string | null>(null);
-  const studiesArray = Array.isArray(state.studies) ? state.studies : [];
+
+  const studiesArray = useMemo(
+    () => (Array.isArray(state.studies) ? state.studies : []),
+    [state.studies]
+  );
 
   const tableDataSource = useMemo(() => {
     return studiesArray.map((study: DicomStudy) => {
       const isExpanded = study.studyInstanceUID === expandedStudyUID;
-      
+
       const row = [
         {
-          content: getMetadataValue(study.metadata, 'PatientName'),
-          title: getMetadataValue(study.metadata, 'PatientName'),
-          gridCol: 2
+          content: getMetadataValue(study.metadata, "PatientName"),
+          title: getMetadataValue(study.metadata, "PatientName"),
+          gridCol: 2,
         },
         {
-          content: getMetadataValue(study.metadata, 'PatientID'),
-          title: getMetadataValue(study.metadata, 'PatientID'),
-          gridCol: 2
+          content: getMetadataValue(study.metadata, "PatientID"),
+          title: getMetadataValue(study.metadata, "PatientID"),
+          gridCol: 2,
         },
         {
-          content: `${formatDate(getMetadataValue(study.metadata, 'StudyDate'))} ${formatTime(
-            getMetadataValue(study.metadata, 'StudyTime')
-          )}`,
-          title: formatDate(getMetadataValue(study.metadata, 'StudyDate')),
-          gridCol: 2
+          content: `${formatDate(
+            getMetadataValue(study.metadata, "StudyDate")
+          )} ${formatTime(getMetadataValue(study.metadata, "StudyTime"))}`,
+          title: formatDate(getMetadataValue(study.metadata, "StudyDate")),
+          gridCol: 2,
         },
         {
-          content: getMetadataValue(study.metadata, 'StudyDescription'),
-          title: getMetadataValue(study.metadata, 'StudyDescription'),
-          gridCol: 2
+          content: getMetadataValue(study.metadata, "StudyDescription"),
+          title: getMetadataValue(study.metadata, "StudyDescription"),
+          gridCol: 2,
         },
         {
-          content: getMetadataValue(study.metadata, 'Modality'),
-          title: getMetadataValue(study.metadata, 'Modality'),
-          gridCol: 2
+          content: getMetadataValue(study.metadata, "Modality"),
+          title: getMetadataValue(study.metadata, "Modality"),
+          gridCol: 2,
         },
         {
           content: study.imageIds?.length || 0,
           title: `${study.imageIds?.length || 0} images`,
-          gridCol: 2
-        }
+          gridCol: 2,
+        },
       ];
 
       const expandedContent = (
         <div className="p-4 space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <h3 className="text-lg font-semibold text-white mb-2">Patient Information</h3>
+              <h3 className="text-lg font-semibold text-white mb-2">
+                Patient Information
+              </h3>
               <div className="space-y-2">
                 <p>
-                  <span className="text-gray-400">Birth Date:</span>{' '}
-                  {formatDate(getMetadataValue(study.metadata, 'PatientBirthDate'))}
+                  <span className="text-gray-400">Birth Date:</span>{" "}
+                  {formatDate(
+                    getMetadataValue(study.metadata, "PatientBirthDate")
+                  )}
                 </p>
                 <p>
-                  <span className="text-gray-400">Sex:</span>{' '}
-                  {getMetadataValue(study.metadata, 'PatientSex')}
+                  <span className="text-gray-400">Sex:</span>{" "}
+                  {getMetadataValue(study.metadata, "PatientSex")}
                 </p>
                 <p>
-                  <span className="text-gray-400">Age:</span>{' '}
-                  {getMetadataValue(study.metadata, 'PatientAge')}
+                  <span className="text-gray-400">Age:</span>{" "}
+                  {getMetadataValue(study.metadata, "PatientAge")}
                 </p>
               </div>
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-white mb-2">Study Information</h3>
+              <h3 className="text-lg font-semibold text-white mb-2">
+                Study Information
+              </h3>
               <div className="space-y-2">
                 <p>
-                  <span className="text-gray-400">Accession Number:</span>{' '}
-                  {getMetadataValue(study.metadata, 'AccessionNumber')}
+                  <span className="text-gray-400">Accession Number:</span>{" "}
+                  {getMetadataValue(study.metadata, "AccessionNumber")}
                 </p>
                 <p>
-                  <span className="text-gray-400">Study ID:</span>{' '}
+                  <span className="text-gray-400">Study ID:</span>{" "}
                   {study.studyInstanceUID}
                 </p>
                 <button
@@ -104,10 +114,11 @@ export function StudyList({ onBack, onViewImages }: StudyListProps) {
       return {
         row,
         expandedContent,
-        onClickRow: () => setExpandedStudyUID(isExpanded ? null : study.studyInstanceUID),
+        onClickRow: () =>
+          setExpandedStudyUID(isExpanded ? null : study.studyInstanceUID),
         isExpanded,
         dataCY: `study-row-${study.studyInstanceUID}`,
-        clickableCY: `study-row-click-${study.studyInstanceUID}`
+        clickableCY: `study-row-click-${study.studyInstanceUID}`,
       };
     });
   }, [studiesArray, expandedStudyUID, onViewImages]);

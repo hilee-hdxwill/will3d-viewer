@@ -1,9 +1,14 @@
 // src/components/DicomViewer/index.tsx
-import { Viewport } from '@/components/DicomViewer/Viewport'
-import ImageViewer from '@/components/DicomViewer/2DImageViewer';
-import { DicomStudy } from '@/types/dicom';
+import ImageViewer from "@/components/DicomViewer/2DImageViewer";
+import { DicomStudy } from "@/types/dicom";
 
-export function DicomViewer({ study, onBack }: { study: DicomStudy; onBack: () => void }) {
+export function DicomViewer({
+  study,
+  onBack,
+}: {
+  study: DicomStudy;
+  onBack: () => void;
+}) {
   return (
     <div className="w-full h-full bg-black p-6">
       <div className="flex justify-between items-center mb-6">
@@ -15,7 +20,7 @@ export function DicomViewer({ study, onBack }: { study: DicomStudy; onBack: () =
           Back to Study List
         </button>
       </div>
-      <ImageViewer 
+      <ImageViewer
         studyInstanceUID={study.studyInstanceUID}
         seriesInstanceUID={study.seriesInstanceUID}
       />
@@ -23,3 +28,5 @@ export function DicomViewer({ study, onBack }: { study: DicomStudy; onBack: () =
     </div>
   );
 }
+
+//ImagesId를 기반으로 input에 값을 넣으면 될듯하다!

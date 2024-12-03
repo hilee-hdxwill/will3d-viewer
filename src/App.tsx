@@ -1,6 +1,6 @@
 // src/App.tsx
-import { DicomViewerProvider } from '@/context/DicomContext';
-import { MainViewer } from '@/components/MainViewer';
+import { DicomViewerProvider } from "@/context/DicomContext";
+import { MainViewer } from "@/components/MainViewer";
 
 function App() {
   return (
