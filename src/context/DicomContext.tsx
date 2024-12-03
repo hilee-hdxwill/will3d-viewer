@@ -125,21 +125,15 @@ export function DicomViewerProvider({
       await Promise.all(processPromises);
 
       const studyUIDs = DicomMetadataStore.getStudyInstanceUIDs();
-      console.log("📑 DicomMetadataStore uids");
-      console.log(studyUIDs);
 
       const firstStudy = DicomMetadataStore.getStudy(studyUIDs[0]);
       console.log("📑 DicomMetadataStore firstStudy info");
-      console.log(firstStudy);
 
       const firstSeriesUID = firstStudy.series[0].SeriesInstanceUID;
       const firstSeries = DicomMetadataStore.getSeries(
         studyUIDs[0],
         firstSeriesUID
       );
-      console.log("📑 DicomMetadataStore firstSeries info");
-      console.log(firstSeries);
-
       const firstSOPInstanceUID = firstSeries.instances[0].SOPInstanceUID;
       const firstSOPInstance = DicomMetadataStore.getInstance(
         studyUIDs[0],

@@ -2,19 +2,17 @@
 import Dropzone from "react-dropzone";
 import { useDicomViewer } from "@/hooks/useDicomViewer";
 import { LoadingSpinner } from "@/components/LoadingSpinner";
+import { useNavigate } from "react-router";
 
-export function DicomUploadPage({
-  onUploadSuccess,
-}: {
-  onUploadSuccess: () => void;
-}) {
+export function DicomUploadPage() {
   const { state, loadDicomFiles } = useDicomViewer();
+  const navigate = useNavigate();
 
   const onDrop = async (acceptedFiles: File[]) => {
     try {
       //console.log('업로드된 파일들:', acceptedFiles);
       await loadDicomFiles(acceptedFiles);
-      onUploadSuccess();
+      navigate("/dicomInfoPage");
     } catch (error) {
       console.error("DICOM 파일 로드 실패:", error);
     }
@@ -29,7 +27,7 @@ export function DicomUploadPage({
       {({ getRootProps, getInputProps, isDragActive }) => (
         <div
           {...getRootProps()}
-          className="flex h-full w-full items-center justify-center cursor-pointer"
+          className="flex h-screen w-screen items-center justify-center cursor-pointer"
         >
           <div className="bg-[#1B1C1E] mx-auto space-y-2 rounded-lg p-8 drop-shadow-md">
             <div className="space-y-2 pt-4 text-center">

@@ -1,17 +1,13 @@
 // src/components/DicomMetadataViewer/index.tsx
+import { useNavigate } from "react-router";
 import { useState } from "react";
 import { useDicomViewer } from "@/hooks/useDicomViewer";
 import { getMetadataValue, formatDate, formatTime } from "@/utils/dicomUtils";
 
-interface DicomMetadataViewerProps {
-  onStudyListClick: () => void;
-}
-
-export function DicomMetadataViewer({
-  onStudyListClick,
-}: DicomMetadataViewerProps) {
+export function DicomMetadataViewer() {
   const { state } = useDicomViewer();
   const [showDetails, setShowDetails] = useState(false);
+  const navigate = useNavigate();
 
   const studiesArray = Array.isArray(state.studies) ? state.studies : [];
   const firstStudy = studiesArray[0];
@@ -21,14 +17,14 @@ export function DicomMetadataViewer({
   );
 
   return (
-    <div className="w-full h-full bg-black flex items-center justify-center overflow-auto py-8">
+    <div className="w-screen h-screen bg-black flex items-center justify-center overflow-auto py-8">
       <div className="text-center max-w-4xl w-full mx-4">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-white text-3xl">
             DICOM Files Loaded Successfully
           </h1>
           <button
-            onClick={onStudyListClick}
+            onClick={() => navigate("/studyListPage")}
             className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-full"
           >
             Go Study Table

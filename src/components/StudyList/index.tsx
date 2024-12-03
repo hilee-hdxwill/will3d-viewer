@@ -5,12 +5,7 @@ import { formatDate, formatTime, getMetadataValue } from "@/utils/dicomUtils";
 import { DicomStudy } from "@/types/dicom";
 import { StudyListTable } from "./StudyListTable";
 
-interface StudyListProps {
-  onBack: () => void;
-  onViewImages: (studyInstanceUID: string) => void;
-}
-
-export function StudyList({ onBack, onViewImages }: StudyListProps) {
+export function StudyList() {
   const { state } = useDicomViewer();
   useEffect(() => {
     console.log("StudyList에서 받은 studies:", state.studies);
@@ -99,10 +94,8 @@ export function StudyList({ onBack, onViewImages }: StudyListProps) {
                   <span className="text-gray-400">Study ID:</span>{" "}
                   {study.studyInstanceUID}
                 </p>
-                <button
-                  onClick={() => onViewImages(study.studyInstanceUID)}
-                  className="mt-4 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
-                >
+                {/* TODO: Rendering view page로 이동하는 로직 추가 (필요하면 query까지 추가해서 진행하면 된다!) */}
+                <button className="mt-4 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
                   Rendering Viewer
                 </button>
               </div>
@@ -121,7 +114,7 @@ export function StudyList({ onBack, onViewImages }: StudyListProps) {
         clickableCY: `study-row-click-${study.studyInstanceUID}`,
       };
     });
-  }, [studiesArray, expandedStudyUID, onViewImages]);
+  }, [studiesArray, expandedStudyUID]);
 
   if (studiesArray.length === 0) {
     return (
@@ -136,10 +129,7 @@ export function StudyList({ onBack, onViewImages }: StudyListProps) {
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-white text-2xl">Study List</h1>
-          <button
-            onClick={onBack}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
-          >
+          <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
             Back to Info
           </button>
         </div>
